@@ -17,7 +17,6 @@ public class GrabItem : MonoBehaviour {
 	void Update () {
 		RaycastHit hit1;
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit1, 20.0f, posMask)) {
-			print ("hit");
 			grabber.transform.position = hit1.point;
 		}
 

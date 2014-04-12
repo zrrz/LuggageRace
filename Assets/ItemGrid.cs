@@ -13,18 +13,24 @@ public class ItemGrid : MonoBehaviour {
 	float nodeSizeY;
 
 	void Start () {
-		gridStartX = transform.position.x - transform.FindChild("Back").localScale.x / 2.0f;
-		gridStartY = transform.position.y - transform.FindChild("Back").localScale.y / 2.0f;
-		nodeSizeX = transform.FindChild ("Back").localScale.x / rows;
-		nodeSizeY = transform.FindChild ("Back").localScale.y / columns;
+		float gridWidth = transform.FindChild ("Back").localScale.x;
+		float nodeWidth = nodePrefab.transform.localScale.x;
+		float gridHeight = transform.FindChild ("Back").localScale.y;
+		float nodeHeight = nodePrefab.transform.localScale.y;
 
-		for (int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
+		gridStartX = transform.position.x - gridWidth/2.0f + nodeWidth/2.0f;
+		gridStartY = transform.position.y + gridHeight/2.0f;
+		nodeSizeX = (gridWidth - nodeWidth) / (columns - 1);
+		nodeSizeY = (gridHeight) / (rows - 1);
+
+		for (int i = 0; i < columns; i++) {
+			for(int j = 0; j < rows; j++) {
 				GameObject t_obj = (GameObject)Instantiate(
 					nodePrefab, 
-					new Vector3(gridStartX + (nodeSizeX*i), gridStartY + (nodeSizeY*j), -0.5f), 
+					new Vector3(gridStartX + (nodeSizeX*i), gridStartY - (nodeSizeY*j), -0.5f), 
 					Quaternion.identity
 				);
+				t_obj.transform.parent = transform;
 			}
 		}
 	}
