@@ -44,6 +44,22 @@ public class ConveyerBelt : MonoBehaviour {
 		}
 	}
 
+	public void PushRight(GameObject node) {
+		LinkedListNode<GameObject> curNode = nodes.Find (node);
+		Transform lastItem = null;
+
+		while (curNode.Next.Value.transform.childCount != 0 && curNode != null) {
+			print ("next");
+			Transform curItem = curNode.Value.transform.GetChild(0);
+			if(lastItem != null) {
+				lastItem.parent = curNode.Value.transform;
+				lastItem.localPosition = Vector3.zero;
+			}
+			lastItem = curItem;
+			curNode = curNode.Previous;
+		}
+	}
+
 	void SpawnItem(Transform parent) {
 		int rand = Random.Range (0, objs.Length);
 		GameObject t_obj = (GameObject)Instantiate (objs [rand], parent.position, parent.rotation);

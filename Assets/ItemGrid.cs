@@ -34,8 +34,4 @@ public class ItemGrid : MonoBehaviour {
 			}
 		}
 	}
-
-	void Update () {
-	
-	}
 }

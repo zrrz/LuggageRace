@@ -10,7 +10,10 @@ public class GrabItem : MonoBehaviour {
 
 	bool holding = false;
 
+	public ConveyerBelt conveyerBelt;
+
 	void Start () {
+		conveyerBelt = GameObject.Find ("Conveyer Belt").GetComponent<ConveyerBelt>();
 		grabber = transform.FindChild ("Grabber");
 	}
 
@@ -41,8 +44,10 @@ public class GrabItem : MonoBehaviour {
 						if(t_obj.transform.childCount == 0) {
 							grabber.GetChild(0).parent = t_obj.transform;
 							t_obj.transform.GetChild(0).localPosition = Vector3.zero;
-							holding = false;
+						} else {
+							conveyerBelt.PushRight(t_obj);
 						}
+						holding = false;
 					}
 				}
 			}
