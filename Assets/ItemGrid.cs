@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class ItemGrid : MonoBehaviour {
 
@@ -12,7 +13,11 @@ public class ItemGrid : MonoBehaviour {
 	float nodeSizeX;
 	float nodeSizeY;
 
+	List<GameObject> nodes;
+
 	void Start () {
+		List<GameObject> nodes = new List<GameObject>();
+
 		float gridWidth = transform.FindChild ("Back").localScale.x;
 		float nodeWidth = nodePrefab.transform.localScale.x;
 		float gridHeight = transform.FindChild ("Back").localScale.y;
@@ -25,7 +30,6 @@ public class ItemGrid : MonoBehaviour {
 		gridStartX = transform.position.x - gridWidth/2.0f + border*2;
 		gridStartY = transform.position.y - gridHeight/2.0f + border*2;
 
-
 		for (int i = 0; i < columns; i++) {
 			for(int j = 0; j < rows; j++) {
 				GameObject t_obj = (GameObject)Instantiate(
@@ -34,6 +38,25 @@ public class ItemGrid : MonoBehaviour {
 					Quaternion.identity
 				);
 				t_obj.transform.parent = transform;
+				t_obj.name += i + " " + j;
+				nodes.Add(t_obj);
+			}
+		}
+		for (int i = 0; i < columns; i++) {
+			for(int j = 0; j < rows; j++) {
+				Node t_node = nodes[i*rows+j].GetComponent<Node>();
+				if(i > 0) {
+					t_node.left = nodes[(i-1)*rows+j].GetComponent<Node>();
+				}
+				if(i < columns - 1) {
+					t_node.right = nodes[(i+1)*rows+j].GetComponent<Node>();
+				}
+				if(j > 0) {
+					t_node.down = nodes[(i*rows)+j-1].GetComponent<Node>();
+				}
+				if(j < rows - 1) {
+					t_node.up = nodes[(i*rows)+j+1].GetComponent<Node>();
+				}
 			}
 		}
 	}
