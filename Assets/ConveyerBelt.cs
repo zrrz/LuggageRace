@@ -23,6 +23,8 @@ public class ConveyerBelt : MonoBehaviour {
 		beltEnd = transform.position.x + transform.FindChild("Belt").localScale.x / 2.0f;
 		nodeSize = transform.FindChild ("Belt").localScale.x / NumNodes;
 		nodes = new LinkedList<GameObject> ();
+		//Initialize the whole list. So that they keep their positions, and lack therof, as it loops around. Will add to as you move around levels.
+		//Randomize the list each play
 		for (int i = 0; i < NumNodes; i++) {
 			nodes.AddFirst (NewNode(new Vector3(beltStart + (nodeSize * i), 0.0f, -0.5f)));
 			SpawnItem(nodes.First.Value.transform);
@@ -31,9 +33,9 @@ public class ConveyerBelt : MonoBehaviour {
 
 	void Update () {
 		foreach (GameObject obj in nodes) {
-			obj.transform.Translate(Vector3.right * speed * Time.deltaTime);
+			obj.transform.localPosition += Vector3.right * speed * Time.deltaTime;
 			if(obj == nodes.First.Value) {
-				if(obj.transform.position.x > beltEnd) {
+				if(obj.transform.localPosition.x > beltEnd) {
 					nodes.AddLast(NewNode(new Vector3(beltStart, 0.0f, -0.5f)));
 					SpawnItem(nodes.Last.Value.transform);
 					nodes.RemoveFirst();

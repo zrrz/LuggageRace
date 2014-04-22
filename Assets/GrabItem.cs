@@ -7,6 +7,7 @@ public class GrabItem : MonoBehaviour {
 
 	public LayerMask posMask;
 	public LayerMask nodeMask;
+	public LayerMask itemMask;
 
 	bool holding = false;
 
@@ -26,8 +27,9 @@ public class GrabItem : MonoBehaviour {
 		if(!holding) {
 			if (Input.GetButtonDown ("Fire1")) {
 				RaycastHit hit2;
-				if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2)) {
+				if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
 					GameObject t_obj = hit2.collider.gameObject;
+					print (t_obj.name);
 					if(t_obj.tag == "Item") {
 						t_obj.transform.parent = grabber;
 						t_obj.transform.localPosition = Vector3.zero;
