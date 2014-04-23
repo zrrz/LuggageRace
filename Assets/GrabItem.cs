@@ -88,16 +88,15 @@ public class GrabItem : MonoBehaviour {
 	const int WIDTH = 3;
 	const int HEIGHT = 2;
 
-
-
 	void PlaceItem(GameObject obj, GameObject nodeObj) {
 		Item item = obj.GetComponent<Item>();
 		Node node = nodeObj.GetComponent<Node>();
 
 		int x = 0, y = 0;
 
-		for(int i = 0; i < WIDTH; i++) {
-			for(int j = 0; j < HEIGHT; j++) {
+		//fix to reset at top each width iteration
+		while (x < WIDTH) {
+			while(y < HEIGHT) {
 				if(item.filled[x][y]) {
 					itemGrid.nodes[x*HEIGHT+y].obj = obj;
 				}

@@ -27,7 +27,11 @@ public class ConveyerBelt : MonoBehaviour {
 		//Randomize the list each play
 		for (int i = 0; i < NumNodes; i++) {
 			nodes.AddFirst (NewNode(new Vector3(beltStart + (nodeSize * i), 0.0f, -0.5f)));
-			SpawnItem(nodes.First.Value.transform);
+		}
+		for (LinkedListNode<GameObject> n = nodes.First; n != null; n = n.Next) {
+			if(n.Value.GetComponent<Node>().obj == null) {
+				SpawnItem(n);
+			}
 		}
 	}
 
@@ -62,10 +66,17 @@ public class ConveyerBelt : MonoBehaviour {
 		}
 	}
 
-	void SpawnItem(Transform parent) {
+	void SpawnItem(Node parent) {
 		int rand = Random.Range (0, objs.Length);
-		GameObject t_obj = (GameObject)Instantiate (objs [rand], parent.position, parent.rotation);
+		GameObject t_obj = (GameObject)Instantiate (objs [rand], parent.transform.position, parent.transform.rotation);
 		t_obj.transform.parent = parent;
+
+		parent.obj = t_obj;
+
+		Item t_item = t_obj.GetComponent<Item>();
+		for (int i = 0, n = t_item.filled[0].Length; i < n; i++) {
+
+		}
 	}
 
 	GameObject NewNode(Vector3 pos) {
