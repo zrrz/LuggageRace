@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 public class GrabItem : MonoBehaviour {
@@ -9,10 +9,13 @@ public class GrabItem : MonoBehaviour {
 	public LayerMask nodeMask;
 	public LayerMask itemMask;
 
-	bool holding = false;
-	bool floating = false;
+	public bool holding = false;
+	public bool floating = false;
 
 	public ConveyerBelt conveyerBelt;
+	public ItemGrid itemGrid;
+
+	GameObject heldObj;
 
 	void Start () {
 		conveyerBelt = GameObject.Find ("Conveyer Belt").GetComponent<ConveyerBelt>();
@@ -27,7 +30,7 @@ public class GrabItem : MonoBehaviour {
 
 		if(!holding) {
 			if(!floating) {
-				if (Input.GetButtonDown ("Fire1")) {
+				if (Input.GetButtonDown ("Fire1")) { //Grab an item
 					RaycastHit hit2;
 					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
 						GameObject t_obj = hit2.collider.gameObject;
@@ -36,22 +39,27 @@ public class GrabItem : MonoBehaviour {
 							t_obj.transform.parent = grabber;
 							t_obj.transform.localPosition = Vector3.zero;
 							holding = true;
+							heldObj = t_obj;
 						}
 					}
 				}
 			}
 		} else {
 			if(floating) {
-				if (Input.GetButtonDown ("Fire1")) {
+				if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
 					RaycastHit hit2;
 					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
-						hit2.collider.gameObject.transform.parent = grabber;
-						grabber.GetChild(0).localPosition = Vector3.zero;
-						floating = false;
+						if(hit2.collider.gameObject == heldObj) {
+							hit2.collider.gameObject.transform.parent = grabber;
+							grabber.GetChild(0).localPosition = Vector3.zero;
+							floating = false;
+						} else {
+							print ("You're already holding an item!");
+						}
 					}
 				}
 			} else {
-				if(Input.GetButtonUp("Fire1")) {
+				if(Input.GetButtonUp("Fire1")) { //Drop an item into node
 					RaycastHit hit2;
 					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, nodeMask)) {
 						GameObject t_obj = hit2.collider.gameObject;
@@ -68,12 +76,36 @@ public class GrabItem : MonoBehaviour {
 							}
 							holding = false;
 						}
-					} else {
+					} else { //Drop an item. Will float there
 						grabber.GetChild(0).parent = null;
 						floating = true;
 					}
 				}
 			}
+		}
+	}
+
+	const int WIDTH = 3;
+	const int HEIGHT = 2;
+
+
+
+	void PlaceItem(GameObject obj, GameObject nodeObj) {
+		Item item = obj.GetComponent<Item>();
+		Node node = nodeObj.GetComponent<Node>();
+
+		int x = 0, y = 0;
+
+		for(int i = 0; i < WIDTH; i++) {
+			for(int j = 0; j < HEIGHT; j++) {
+				if(item.filled[x][y]) {
+					itemGrid.nodes[x*HEIGHT+y].obj = obj;
+				}
+				x += item.dirY.x;
+				y += item.dirY.y;
+			}
+			x += item.dirX.x;
+			y += item.dirX.y;
 		}
 	}
 }
