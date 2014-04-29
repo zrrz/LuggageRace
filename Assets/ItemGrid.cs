@@ -13,10 +13,13 @@ public class ItemGrid : MonoBehaviour {
 	float nodeSizeX;
 	float nodeSizeY;
 
-	public List<GameObject> nodes;
+	//public List<GameObject> nodes;
+
+	public GameObject[,] nodes;
 
 	void Start () {
-		nodes = new List<GameObject>();
+		//nodes = new List<GameObject>();
+		nodes = new GameObject[columns, rows];
 
 		float gridWidth = transform.FindChild ("Back").localScale.x;
 		float nodeWidth = nodePrefab.transform.localScale.x;
@@ -39,25 +42,25 @@ public class ItemGrid : MonoBehaviour {
 				);
 				t_obj.transform.parent = transform;
 				t_obj.name += i + " " + j;
-				nodes.Add(t_obj);
+				nodes[i,j] = t_obj;
 			}
 		}
 		for (int i = 0; i < columns; i++) {
 			for(int j = 0; j < rows; j++) {
-				Node t_node = nodes[i*rows+j].GetComponent<Node>();
+				Node t_node = nodes[i,j].GetComponent<Node>();
 				t_node.xPos = i;
 				t_node.yPos = j;
 				if(i > 0) {
-					t_node.left = nodes[(i-1)*rows+j].GetComponent<Node>();
+					t_node.left = nodes[i-1, j].GetComponent<Node>();
 				}
 				if(i < columns - 1) {
-					t_node.right = nodes[(i+1)*rows+j].GetComponent<Node>();
+					t_node.right = nodes[i+1, j].GetComponent<Node>();
 				}
 				if(j > 0) {
-					t_node.down = nodes[(i*rows)+j-1].GetComponent<Node>();
+					t_node.down = nodes[i, j-1].GetComponent<Node>();
 				}
 				if(j < rows - 1) {
-					t_node.up = nodes[(i*rows)+j+1].GetComponent<Node>();
+					t_node.up = nodes[i, j+1].GetComponent<Node>();
 				}
 			}
 		}

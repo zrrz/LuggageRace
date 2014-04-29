@@ -106,44 +106,29 @@ public class GrabItem : MonoBehaviour {
 		}
 	}
 
-	//const int WIDTH = 3;
-	//const int HEIGHT = 2;
-
 	void PlaceItem(GameObject obj, GameObject nodeObj) {
 		Item item = obj.GetComponent<Item>();
 		Node node = nodeObj.GetComponent<Node>();
 
-		int x = node.xPos, y = node.yPos;
+		int x = node.xPos, y = node.yPos; //could be issue
 
 		int width = obj.GetComponent<Item>().width;
 		int height = obj.GetComponent<Item>().height;
 
+
 		for(int i = 0; i < width; i++) {
-			x -= item.dirY.x * height;
-			y -= item.dirY.y * height;
 			for(int j = 0; j < height; j++) {
 				if(item.filled[i,j]) {
-					itemGrid.nodes[x*height+y].GetComponent<Node>().obj = obj;
+					itemGrid.nodes[x,y].GetComponent<Node>().obj = obj;
 				}
 				x += item.dirY.x;
 				y += item.dirY.y;
 			}
+			x -= item.dirY.x;
+			y -= item.dirY.y;
+
 			x += item.dirX.x;
 			y += item.dirX.y;
 		}
-
-		//fix to reset at top each width iteration
-//		while (x < width) {
-//			while(y < height) {
-//				if(item.filled[x,y]) {
-//					print(x*height+y);
-//					itemGrid.nodes[x*height+y].GetComponent<Node>().obj = obj;
-//				}
-//				x += item.dirY.x;
-//				//y += item.dirY.y;
-//			}
-//			//x += item.dirX.x;
-//			y += item.dirX.y;
-//		}
 	}
 }
