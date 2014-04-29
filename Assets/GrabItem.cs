@@ -48,7 +48,7 @@ public class GrabItem : MonoBehaviour {
 								t_node.obj = null;
 							
 							t_obj.transform.parent = grabber;
-							t_obj.transform.localPosition = Vector3.zero;
+							//t_obj.transform.localPosition = Vector3.zero;
 							holding = true;
 							heldObj = t_obj;
 						}
