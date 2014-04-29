@@ -30,6 +30,12 @@ public class GrabItem : MonoBehaviour {
 			grabber.transform.position = hit1.point;
 		}
 
+		if(holding) {
+			if (Input.GetButtonDown ("Fire2")) {
+				grabber.GetChild(0).GetComponent<Item>().Rotate();
+			}
+		}
+
 		if(!holding) {
 			if(!floating) {
 				if (Input.GetButtonDown ("Fire1")) { //Grab an item
