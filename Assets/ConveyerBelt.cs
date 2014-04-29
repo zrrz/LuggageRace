@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class ConveyerBelt : MonoBehaviour {
 
-	LinkedList<GameObject> nodes;
+	public List<BeltNode> nodes;
 
 	public float speed = 1.0f;
 
@@ -16,73 +16,75 @@ public class ConveyerBelt : MonoBehaviour {
 	float beltEnd;
 	float nodeSize;
 
-	public int NumNodes = 10;
+	public int beltLength = 10;
+	public int numNodes = 30;
 
-	void Start () {
+	int nodeIndex = 0;
+
+	void Start() {
 		beltStart = transform.position.x - transform.FindChild("Belt").localScale.x / 2.0f;
-		beltEnd = transform.position.x + transform.FindChild("Belt").localScale.x / 2.0f;
-		nodeSize = transform.FindChild ("Belt").localScale.x / NumNodes;
-		nodes = new LinkedList<GameObject> ();
-		//Initialize the whole list. So that they keep their positions, and lack therof, as it loops around. Will add to as you move around levels.
-		//Randomize the list each play
-		for (int i = 0; i < NumNodes; i++) {
-			nodes.AddFirst (NewNode(new Vector3(beltStart + (nodeSize * i), 0.0f, -0.5f)));
+		nodeSize = transform.FindChild ("Belt").localScale.x / beltLength;
+
+		nodes = new List<BeltNode> ();
+		for (int i = 0; i < numNodes; i++) {	
+			if(i > beltLength) 
+				nodes.Add(NewNode(Vector3.one*1000.0f));
+			else
+				nodes.Add(NewNode(new Vector3(beltStart + (nodeSize * i), 0.0f, -0.5f)));
 		}
-		for (LinkedListNode<GameObject> n = nodes.First; n != null; n = n.Next) {
-			if(n.Value.GetComponent<Node>().obj == null) {
-				SpawnItem(n);
-			}
+		for (int i = 0; i < numNodes; i++) {
+			if(nodes[i].obj == null)
+				SpawnItem(i);
+		}
+		for(int i = 0; i < beltLength + 1; i++) {
+			nodes[i].on = true;
+		}
+		nodeIndex = 0;
+
+	}
+
+	void Update() {
+		if(nodes[(nodeIndex + beltLength) % numNodes].transform.position.x > transform.FindChild("Belt").localScale.x/2.0f) {
+			nodes[(nodeIndex + beltLength) % numNodes].on = false;
+			nodes[(nodeIndex + beltLength) % numNodes].transform.localPosition = new Vector3(1000f, 0f, -0.5f);
+			nodeIndex--;
+			if(nodeIndex < 0) nodeIndex = numNodes - 1;
+			nodes[nodeIndex].on = true;
+			nodes[nodeIndex].transform.localPosition = new Vector3(beltStart, 0f, -0.5f);
 		}
 	}
 
-	void Update () {
-		foreach (GameObject obj in nodes) {
-			obj.transform.localPosition += Vector3.right * speed * Time.deltaTime;
-			if(obj == nodes.First.Value) {
-				if(obj.transform.localPosition.x > beltEnd) {
-					nodes.AddLast(NewNode(new Vector3(beltStart, 0.0f, -0.5f)));
-					SpawnItem(nodes.Last);
-					nodes.RemoveFirst();
-					Destroy(obj);
-					return;
-				}
-			}
-		}
-	}
-
-	public void PushRight(GameObject node) {
-		LinkedListNode<GameObject> curNode = nodes.Find (node);
-		Transform lastItem = null;
-
-		while (curNode.Next.Value.transform.childCount != 0 && curNode != null) {
-			print ("next");
-			Transform curItem = curNode.Value.transform.GetChild(0);
-			if(lastItem != null) {
-				lastItem.parent = curNode.Value.transform;
-				lastItem.localPosition = Vector3.zero;
-			}
-			lastItem = curItem;
-			curNode = curNode.Previous;
-		}
-	}
-
-	void SpawnItem(LinkedListNode<GameObject> parent) {
+	void SpawnItem(int index) {
 		int rand = Random.Range (0, objs.Length);
-		GameObject t_obj = (GameObject)Instantiate (objs [rand], parent.Value.transform.position, parent.Value.transform.rotation);
-		t_obj.transform.parent = parent.Value.transform;
 
-		parent.Value.GetComponent<Node>().obj = t_obj;
+		Item t_item = ((GameObject)Instantiate (objs[rand])).GetComponent<Item>();
 
-		Item t_item = t_obj.GetComponent<Item>();
-		for (int i = 0, n = t_item.filled[0].Length; i < n; i++) {
+		if (t_item.width + index > numNodes)
+			return;
 
+		t_item.transform.parent = nodes[index].transform;
+
+		//float buffer = nodeSize - nodePrefab.transform.localScale.x;
+
+		t_item.transform.localPosition = new Vector3((t_item.width - 1)/2.0f, 1 - 1.0f/t_item.height, 0.0f);
+		//Vector3 pos = new Vector3 (0f, (1 - 1.0f/t_item.height), -0.5f); 
+		//if(t_item.width % 2 == 0) //even
+		//	pos.x += (nodes[index].transform.position.x + nodes[(index + 1) % numNodes].transform.position.x)/2.0f;
+		//else
+		//	pos.x = nodes[(index + 1) % numNodes].transform.position.x;
+			
+		//t_item.transform.localPosition = pos;
+
+		for (int i = 0; i < t_item.width; i++) {
+			nodes[i + index].obj = t_item.gameObject;
 		}
 	}
 
-	GameObject NewNode(Vector3 pos) {
-		GameObject t_obj = (GameObject)Instantiate (nodePrefab);
+	BeltNode NewNode(Vector3 pos) {
+		BeltNode t_obj = ((GameObject)Instantiate (nodePrefab)).GetComponent<BeltNode>();
 		t_obj.transform.parent = transform;
 		t_obj.transform.localPosition = pos;
+		t_obj.speed = speed;
 		return t_obj;
 	}
 }

@@ -13,10 +13,10 @@ public class ItemGrid : MonoBehaviour {
 	float nodeSizeX;
 	float nodeSizeY;
 
-	public List<Node> nodes;
+	public List<GameObject> nodes;
 
 	void Start () {
-		List<GameObject> nodes = new List<GameObject>();
+		nodes = new List<GameObject>();
 
 		float gridWidth = transform.FindChild ("Back").localScale.x;
 		float nodeWidth = nodePrefab.transform.localScale.x;
@@ -45,6 +45,8 @@ public class ItemGrid : MonoBehaviour {
 		for (int i = 0; i < columns; i++) {
 			for(int j = 0; j < rows; j++) {
 				Node t_node = nodes[i*rows+j].GetComponent<Node>();
+				t_node.xPos = i;
+				t_node.yPos = j;
 				if(i > 0) {
 					t_node.left = nodes[(i-1)*rows+j].GetComponent<Node>();
 				}

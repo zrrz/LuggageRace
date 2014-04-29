@@ -7,6 +7,7 @@ public class GrabItem : MonoBehaviour {
 
 	public LayerMask posMask;
 	public LayerMask nodeMask;
+	public LayerMask beltMask;
 	public LayerMask itemMask;
 
 	public bool holding = false;
@@ -20,6 +21,7 @@ public class GrabItem : MonoBehaviour {
 	void Start () {
 		conveyerBelt = GameObject.Find ("Conveyer Belt").GetComponent<ConveyerBelt>();
 		grabber = transform.FindChild ("Grabber");
+		itemGrid = GameObject.Find("ItemGrid").GetComponent<ItemGrid>();
 	}
 
 	void Update () {
@@ -34,8 +36,11 @@ public class GrabItem : MonoBehaviour {
 					RaycastHit hit2;
 					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
 						GameObject t_obj = hit2.collider.gameObject;
-						print (t_obj.name);
 						if(t_obj.tag == "Item") {
+							Node t_node = t_obj.transform.parent.GetComponent<Node>();
+							if(t_node)
+								t_node.obj = null;
+							
 							t_obj.transform.parent = grabber;
 							t_obj.transform.localPosition = Vector3.zero;
 							holding = true;
@@ -65,14 +70,24 @@ public class GrabItem : MonoBehaviour {
 						GameObject t_obj = hit2.collider.gameObject;
 						if(t_obj.tag == "Node") {
 							Node t_node = t_obj.GetComponent<Node>();
-							if(t_obj.transform.childCount == 0) {
-								t_node.obj = grabber.GetChild(0).gameObject;
+							if(t_obj.GetComponent<Node>().obj == null) {
+								//t_node.obj = grabber.GetChild(0).gameObject;
 
 								grabber.GetChild(0).parent = t_obj.transform;
 								t_obj.transform.GetChild(0).localPosition = Vector3.zero;
-
-							} else {
-								conveyerBelt.PushRight(t_obj);
+								PlaceItem(t_obj.transform.GetChild(0).gameObject, t_obj);
+							}
+							holding = false;
+						}
+					} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, beltMask)) {
+						GameObject t_obj = hit2.collider.gameObject;
+						if(t_obj.tag == "Node") {
+							BeltNode t_node = t_obj.GetComponent<BeltNode>();
+							if(t_obj.GetComponent<BeltNode>().obj == null) {
+								t_node.obj = grabber.GetChild(0).gameObject;
+								
+								grabber.GetChild(0).parent = t_obj.transform;
+								t_obj.transform.GetChild(0).localPosition = Vector3.zero;
 							}
 							holding = false;
 						}
@@ -85,20 +100,24 @@ public class GrabItem : MonoBehaviour {
 		}
 	}
 
-	const int WIDTH = 3;
-	const int HEIGHT = 2;
+	//const int WIDTH = 3;
+	//const int HEIGHT = 2;
 
 	void PlaceItem(GameObject obj, GameObject nodeObj) {
 		Item item = obj.GetComponent<Item>();
 		Node node = nodeObj.GetComponent<Node>();
 
-		int x = 0, y = 0;
+		int x = node.xPos, y = node.yPos;
 
-		//fix to reset at top each width iteration
-		while (x < WIDTH) {
-			while(y < HEIGHT) {
-				if(item.filled[x][y]) {
-					itemGrid.nodes[x*HEIGHT+y].obj = obj;
+		int width = obj.GetComponent<Item>().width;
+		int height = obj.GetComponent<Item>().height;
+
+		for(int i = 0; i < width; i++) {
+			x -= item.dirY.x * height;
+			y -= item.dirY.y * height;
+			for(int j = 0; j < height; j++) {
+				if(item.filled[i,j]) {
+					itemGrid.nodes[x*height+y].GetComponent<Node>().obj = obj;
 				}
 				x += item.dirY.x;
 				y += item.dirY.y;
@@ -106,5 +125,19 @@ public class GrabItem : MonoBehaviour {
 			x += item.dirX.x;
 			y += item.dirX.y;
 		}
+
+		//fix to reset at top each width iteration
+//		while (x < width) {
+//			while(y < height) {
+//				if(item.filled[x,y]) {
+//					print(x*height+y);
+//					itemGrid.nodes[x*height+y].GetComponent<Node>().obj = obj;
+//				}
+//				x += item.dirY.x;
+//				//y += item.dirY.y;
+//			}
+//			//x += item.dirX.x;
+//			y += item.dirX.y;
+//		}
 	}
 }

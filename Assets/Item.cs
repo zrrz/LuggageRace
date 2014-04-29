@@ -3,12 +3,14 @@ using System.Collections;
 
 public class Item : MonoBehaviour {
 
-	public bool [][] filled;
+	public bool [,] filled;
 
 	public class Dir {
 		public Dir(int t_x, int t_y) { x = t_x; y = t_y;}
 		public int x, y;
 	};
+
+	public int width, height;
 
 	int rotTableIterX = 0;
 	int rotTableIterY = 1;
@@ -21,6 +23,12 @@ public class Item : MonoBehaviour {
 	const int ROT_TABLE_SIZE = 4;
 
 	void Start () {
+		filled = new bool[width, height];
+		for(int i = 0; i < width; i++) {
+			for(int j = 0; j < height; j++) {
+				filled[i,j] = true;
+			}
+		}
 		dirX = rotationTable[rotTableIterX];
 		dirY = rotationTable[rotTableIterY];
 	}
