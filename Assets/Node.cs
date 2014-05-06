@@ -3,6 +3,6 @@ using System.Collections;
 
 public class Node : MonoBehaviour {
 	public GameObject obj;
-	public Node left, right, up, down;
+	//public Node left, right, up, down;
 	public int xPos, yPos;
 }

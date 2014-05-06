@@ -25,84 +25,100 @@ public class GrabItem : MonoBehaviour {
 	}
 
 	void Update () {
-		RaycastHit hit1;
-		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit1, 20.0f, posMask)) {
-			grabber.transform.position = hit1.point;
-		}
+		UpdateGrabberPos ();
 
 		if(holding) {
 			if (Input.GetButtonDown ("Fire2")) {
-				grabber.GetChild(0).GetComponent<Item>().Rotate();
+				heldObj.GetComponent<Item>().Rotate();
 			}
 		}
 
 		if(!holding) {
 			if(!floating) {
-				if (Input.GetButtonDown ("Fire1")) { //Grab an item
-					RaycastHit hit2;
-					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
-						GameObject t_obj = hit2.collider.gameObject;
-						if(t_obj.tag == "Item") {
-							Node t_node = t_obj.transform.parent.GetComponent<Node>();
-							if(t_node)
-								t_node.obj = null;
-							
-							t_obj.transform.parent = grabber;
-							//t_obj.transform.localPosition = Vector3.zero;
-							holding = true;
-							heldObj = t_obj;
-						}
-					}
+				if (Input.GetButtonDown ("Fire1")) {
+					PickUpItem();
 				}
 			}
 		} else {
 			if(floating) {
-				if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
-					RaycastHit hit2;
-					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
-						if(hit2.collider.gameObject == heldObj) {
-							hit2.collider.gameObject.transform.parent = grabber;
-							grabber.GetChild(0).localPosition = Vector3.zero;
-							floating = false;
-						} else {
-							print ("You're already holding an item!");
-						}
-					}
-				}
+				PickBackUpItem();
 			} else {
 				if(Input.GetButtonUp("Fire1")) { //Drop an item into node
-					RaycastHit hit2;
-					if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, nodeMask)) {
-						GameObject t_obj = hit2.collider.gameObject;
-						if(t_obj.tag == "Node") {
-							Node t_node = t_obj.GetComponent<Node>();
-							if(t_obj.GetComponent<Node>().obj == null) {
-								//t_node.obj = grabber.GetChild(0).gameObject;
-
-								grabber.GetChild(0).parent = t_obj.transform;
-								t_obj.transform.GetChild(0).localPosition = Vector3.zero;
-								PlaceItem(t_obj.transform.GetChild(0).gameObject, t_obj);
-							}
-							holding = false;
-						}
-					} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, beltMask)) {
-						GameObject t_obj = hit2.collider.gameObject;
-						if(t_obj.tag == "Node") {
-							BeltNode t_node = t_obj.GetComponent<BeltNode>();
-							if(t_obj.GetComponent<BeltNode>().obj == null) {
-								t_node.obj = grabber.GetChild(0).gameObject;
-								
-								grabber.GetChild(0).parent = t_obj.transform;
-								t_obj.transform.GetChild(0).localPosition = Vector3.zero;
-							}
-							holding = false;
-						}
-					} else { //Drop an item. Will float there
-						grabber.GetChild(0).parent = null;
-						floating = true;
-					}
+					DropItem();
 				}
 			}
+		}
+	}
+
+	void PickBackUpItem() {
+		if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
+			RaycastHit hit2;
+			if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
+				if(hit2.collider.gameObject == heldObj) {
+					hit2.collider.gameObject.transform.parent = grabber;
+					grabber.GetChild(0).localPosition = Vector3.zero;
+					floating = false;
+				} else {
+					print ("You're already holding an item!");
+				}
+			}
+		}
+	}
+
+	void DropItem() {
+		RaycastHit hit2;
+		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, nodeMask)) {
+			GameObject t_obj = hit2.collider.gameObject;
+			if(t_obj.tag == "Node") {
+				Node t_node = t_obj.GetComponent<Node>();
+				if(t_obj.GetComponent<Node>().obj == null) {
+					//t_node.obj = grabber.GetChild(0).gameObject;
+					
+					grabber.GetChild(0).parent = t_obj.transform;
+					t_obj.transform.GetChild(0).localPosition = Vector3.zero;
+					PlaceItem(t_obj.transform.GetChild(0).gameObject, t_obj);
+				}
+				holding = false;
+			}
+		} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, beltMask)) {
+			GameObject t_obj = hit2.collider.gameObject;
+			if(t_obj.tag == "Node") {
+				BeltNode t_node = t_obj.GetComponent<BeltNode>();
+				if(t_obj.GetComponent<BeltNode>().obj == null) {
+					t_node.obj = grabber.GetChild(0).gameObject;
+					
+					grabber.GetChild(0).parent = t_obj.transform;
+					t_obj.transform.GetChild(0).localPosition = Vector3.zero;
+				}
+				holding = false;
+			}
+		} else { //Drop an item. Will float there
+			grabber.GetChild(0).parent = null;
+			floating = true;
+		}
+	}
+
+	void PickUpItem() {
+		RaycastHit hit;
+		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, itemMask)) {
+			GameObject t_obj = hit.collider.gameObject;
+			if(t_obj.tag == "Item") {
+				Node t_node = t_obj.transform.parent.GetComponent<Node>();
+				if(t_node)
+					t_node.obj = null;
+				
+				t_obj.transform.parent = grabber;
+				//t_obj.transform.localPosition = Vector3.zero;
+				holding = true;
+				heldObj = t_obj;
+			}
+		}
+	}
+
+	void UpdateGrabberPos() {
+		RaycastHit hit;
+		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, posMask)) {
+			grabber.transform.position = hit.point;
 		}
 	}
 
