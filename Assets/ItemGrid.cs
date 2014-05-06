@@ -48,11 +48,11 @@ public class ItemGrid : MonoBehaviour {
 				nodes[i,j] = t_obj;
 			}
 		}
-//		for (int i = 0; i < columns; i++) {
-//			for(int j = 0; j < rows; j++) {
-//				Node t_node = nodes[i,j].GetComponent<Node>();
-//				t_node.xPos = i;
-//				t_node.yPos = j;
+		for (int i = 0; i < columns; i++) {
+			for(int j = 0; j < rows; j++) {
+				Node t_node = nodes[i,j].GetComponent<Node>();
+				t_node.xPos = i;
+				t_node.yPos = j;
 //				if(i > 0) {
 //					t_node.left = nodes[i-1, j].GetComponent<Node>();
 //				}
@@ -65,7 +65,7 @@ public class ItemGrid : MonoBehaviour {
 //				if(j < rows - 1) {
 //					t_node.up = nodes[i, j+1].GetComponent<Node>();
 //				}
-//			}
-//		}
+			}
+		}
 	}
 }
