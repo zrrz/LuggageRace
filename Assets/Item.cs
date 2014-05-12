@@ -13,9 +13,9 @@ public class Item : MonoBehaviour {
 	public int width, height;
 
 	int rotTableIterX = 0;
-	int rotTableIterY = 1;
+	int rotTableIterY = 3;
 
-	static Dir[] rotationTable = {new Dir(1, 0), new Dir(0, -1), new Dir(-1, 0), new Dir(0, 1)}; //Will it only "new" once?
+	static Dir[] rotationTable = {new Dir(1, 0), new Dir(0, 1), new Dir(-1, 0), new Dir(0, -1)}; //Will it only "new" once?
 
 	public Dir dirX;
 	public Dir dirY;

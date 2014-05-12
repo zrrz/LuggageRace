@@ -154,8 +154,8 @@ public class GrabItem : MonoBehaviour {
 				x += item.dirY.x;
 				y += item.dirY.y;
 			}
-			x -= item.dirY.x;
-			y -= item.dirY.y;
+			x -= item.dirY.x * height;
+			y -= item.dirY.y * height;
 			
 			x += item.dirX.x;
 			y += item.dirX.y;
@@ -182,8 +182,8 @@ public class GrabItem : MonoBehaviour {
 				x += item.dirY.x;
 				y += item.dirY.y;
 			}
-			x -= item.dirY.x;
-			y -= item.dirY.y;
+			x -= item.dirY.x * height;
+			y -= item.dirY.y * height;
 
 			x += item.dirX.x;
 			y += item.dirX.y;
@@ -209,8 +209,8 @@ public class GrabItem : MonoBehaviour {
 				x += item.dirY.x;
 				y += item.dirY.y;
 			}
-			x -= item.dirY.x;
-			y -= item.dirY.y;
+			x -= item.dirY.x * height;
+			y -= item.dirY.y * height;
 			
 			x += item.dirX.x;
 			y += item.dirX.y;
