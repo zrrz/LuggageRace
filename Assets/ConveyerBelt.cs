@@ -34,6 +34,7 @@ public class ConveyerBelt : MonoBehaviour {
 				nodes.Add(NewNode(new Vector3(beltStart + (nodeSize * i), 0.0f, -0.5f)));
 		}
 		for (int i = 0; i < numNodes; i++) {
+			nodes[i].index = i;
 			if(nodes[i].obj == null)
 				SpawnItem(i);
 		}

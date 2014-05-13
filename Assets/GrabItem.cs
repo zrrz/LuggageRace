@@ -34,38 +34,36 @@ public class GrabItem : MonoBehaviour {
 		if(holding) {
 			ClearSpot();
 			DrawPlacementOutline();
-			if (Input.GetButtonDown ("Fire2")) {
-				heldObj.GetComponent<Item>().Rotate();
-			}
-		}
 
-		if(!holding) {
-			if(!floating) {
-				if (Input.GetButtonDown ("Fire1")) {
-					PickUpItem();
-				}
-			}
-		} else {
 			if(floating) {
-				PickBackUpItem();
+				if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
+					PickBackUpItem();
+				}
 			} else {
 				if(Input.GetButtonUp("Fire1")) { //Drop an item into node
 					DropItem();
+				}
+				if (Input.GetButtonDown ("Fire2")) {
+					heldObj.GetComponent<Item>().Rotate();
+				}
+			}
+		} else {
+			if(!floating) {
+				if (Input.GetButtonDown ("Fire1")) {
+					PickUpItem();
 				}
 			}
 		}
 	}
 
 	void PickBackUpItem() {
-		if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
-			RaycastHit hit2;
-			if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
-				if(hit2.collider.gameObject == heldObj) {
-					hit2.collider.gameObject.transform.parent = grabber;
-					floating = false;
-				} else {
-					print ("You're already holding an item!");
-				}
+		RaycastHit hit2;
+		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, itemMask)) {
+			if(hit2.collider.gameObject == heldObj) {
+				hit2.collider.gameObject.transform.parent = grabber;
+				floating = false;
+			} else {
+				print ("You're already holding an item!");
 			}
 		}
 	}
@@ -86,11 +84,10 @@ public class GrabItem : MonoBehaviour {
 	}
 
 	void DropItem() {
-		RaycastHit hit2;
+		RaycastHit hit;
 		Debug.DrawRay(heldObj.transform.FindChild("TopLeft").position, transform.forward, Color.red, 2.0f);
-		if(Physics.Raycast(heldObj.transform.FindChild("TopLeft").position - transform.forward, transform.forward, out hit2, 20.0f, nodeMask)) {
-		//if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, nodeMask)) {
-			GameObject t_obj = hit2.collider.gameObject;
+		if(Physics.Raycast(heldObj.transform.FindChild("TopLeft").position - transform.forward, transform.forward, out hit, 20.0f, nodeMask)) {
+			GameObject t_obj = hit.collider.gameObject;
 			if(t_obj.tag == "Node") {
 				Node t_node = t_obj.GetComponent<Node>();
 				if(CheckSpot(heldObj, t_obj)) {
@@ -101,9 +98,10 @@ public class GrabItem : MonoBehaviour {
 					holding = false;
 				}
 			}
-		} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, beltMask)) {
-			GameObject t_obj = hit2.collider.gameObject;
-			if(t_obj.tag == "Node") {
+		} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, beltMask)) {
+			GameObject t_obj = hit.collider.gameObject;
+			if(t_obj.tag == "BeltNode") {
+				print ("hit");
 				BeltNode t_node = t_obj.GetComponent<BeltNode>();
 				if(t_obj.GetComponent<BeltNode>().obj == null) {
 					t_node.obj = heldObj;
@@ -129,10 +127,12 @@ public class GrabItem : MonoBehaviour {
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, itemMask)) {
 			GameObject t_obj = hit.collider.gameObject;
 			if(t_obj.tag == "Item") {
-				Node t_node = t_obj.transform.parent.GetComponent<Node>();
-				if(t_node)
-					RemoveItem(t_obj, t_obj.transform.parent.gameObject);
-				
+				//Node t_node = t_obj.transform.parent.GetComponent<Node>();
+				//if(t_node)
+				RemoveItem(t_obj, t_obj.transform.parent.gameObject);
+				//Node t_beltNode = t_obj.transform.parent.GetComponent<BeltNode>();
+				//if(t_node)
+
 				t_obj.transform.parent = grabber;
 				holding = true;
 				heldObj = t_obj;
@@ -251,29 +251,42 @@ public class GrabItem : MonoBehaviour {
 	}
 
 	void RemoveItem(GameObject obj, GameObject nodeObj) {
-		
-		Item item = obj.GetComponent<Item>();
-		Node node = nodeObj.GetComponent<Node>();
-		
-		int x = node.xPos, y = node.yPos; //could be issue
-		
-		int width = obj.GetComponent<Item>().width;
-		int height = obj.GetComponent<Item>().height;
-		
-		
-		for(int i = 0; i < width; i++) {
-			for(int j = 0; j < height; j++) {
-				if(item.filled[i,j]) {
-					itemGrid.nodes[x,y].GetComponent<Node>().obj = null;
-				}
-				x += item.dirY.x;
-				y += item.dirY.y;
-			}
-			x -= item.dirY.x * height;
-			y -= item.dirY.y * height;
+
+		Node t_node = nodeObj.GetComponent<Node>();
+		if(t_node) {
+			Item item = obj.GetComponent<Item>();
+			Node node = nodeObj.GetComponent<Node>();
 			
-			x += item.dirX.x;
-			y += item.dirX.y;
+			int x = node.xPos, y = node.yPos; //could be issue
+			
+			int width = obj.GetComponent<Item>().width;
+			int height = obj.GetComponent<Item>().height;
+			
+			
+			for(int i = 0; i < width; i++) {
+				for(int j = 0; j < height; j++) {
+					if(item.filled[i,j]) {
+						itemGrid.nodes[x,y].GetComponent<Node>().obj = null;
+					}
+					x += item.dirY.x;
+					y += item.dirY.y;
+				}
+				x -= item.dirY.x * height;
+				y -= item.dirY.y * height;
+				
+				x += item.dirX.x;
+				y += item.dirX.y;
+			}
+		} else {
+			BeltNode t_beltNode = nodeObj.GetComponent<BeltNode>();
+			if(t_beltNode) {
+				Item t_item = obj.GetComponent<Item>();
+				int index = t_beltNode.index;
+				for(int i = 0; i < t_item.width; i++) {
+					//NOTE: Mod it to wrap around
+					conveyerBelt.nodes[(index + i) % conveyerBelt.numNodes].obj = null;
+				}
+			}
 		}
 	}
 }

@@ -41,6 +41,8 @@ public class Item : MonoBehaviour {
 		dirX = rotationTable[rotTableIterX];
 		dirY = rotationTable[rotTableIterY];
 
+		dirX = rotationTable[SafeAdd(rotTableIterX)];
+
 		//transform.Rotate(Vector3.forward * 90.0f);
 		transform.RotateAround (transform.parent.position, Vector3.forward, -90.0f);
 	}

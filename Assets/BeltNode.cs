@@ -7,6 +7,8 @@ public class BeltNode : MonoBehaviour {
 
 	public float speed;
 
+	public int index;
+
 	void Start () {
 	
 	}
