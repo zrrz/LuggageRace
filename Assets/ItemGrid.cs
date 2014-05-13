@@ -13,8 +13,6 @@ public class ItemGrid : MonoBehaviour {
 	float nodeSizeX;
 	float nodeSizeY;
 
-	//public List<GameObject> nodes;
-
 	public GameObject[,] nodes;
 
 	void Start () {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GrabItem : MonoBehaviour {
 
@@ -18,7 +19,10 @@ public class GrabItem : MonoBehaviour {
 
 	GameObject heldObj;
 
+	List<GameObject> outlined;
+
 	void Start () {
+		outlined = new List<GameObject> ();
 		conveyerBelt = GameObject.Find ("Conveyer Belt").GetComponent<ConveyerBelt>();
 		grabber = transform.FindChild ("Grabber");
 		itemGrid = GameObject.Find("ItemGrid").GetComponent<ItemGrid>();
@@ -28,6 +32,8 @@ public class GrabItem : MonoBehaviour {
 		UpdateGrabberPos ();
 
 		if(holding) {
+			ClearSpot();
+			DrawPlacementOutline();
 			if (Input.GetButtonDown ("Fire2")) {
 				heldObj.GetComponent<Item>().Rotate();
 			}
@@ -64,6 +70,21 @@ public class GrabItem : MonoBehaviour {
 		}
 	}
 
+	void DrawPlacementOutline() {
+		RaycastHit hit;
+		if(Physics.Raycast(heldObj.transform.FindChild("TopLeft").position - transform.forward, transform.forward, out hit, 20.0f, nodeMask)) {
+			GameObject t_obj = hit.collider.gameObject;
+			if(t_obj.tag == "Node") {
+				Node t_node = t_obj.GetComponent<Node>();
+				if(CheckSpot(heldObj, t_obj)) {
+					DrawSpot(heldObj, t_obj, Color.blue);
+				} else {
+					DrawSpot(heldObj, t_obj, Color.red);
+				}
+			}
+		}
+	}
+
 	void DropItem() {
 		RaycastHit hit2;
 		Debug.DrawRay(heldObj.transform.FindChild("TopLeft").position, transform.forward, Color.red, 2.0f);
@@ -72,17 +93,13 @@ public class GrabItem : MonoBehaviour {
 			GameObject t_obj = hit2.collider.gameObject;
 			if(t_obj.tag == "Node") {
 				Node t_node = t_obj.GetComponent<Node>();
-				//if(t_obj.GetComponent<Node>().obj == null) {
-					if(CheckSpot(heldObj, t_obj)) {
-						heldObj.transform.parent = t_obj.transform;
-						heldObj.transform.localPosition = heldObj.transform.position - heldObj.transform.FindChild("TopLeft").position;
-						PlaceItem(heldObj, t_obj);
-						heldObj = null;
-						holding = false;
-					} else {
-						FloatItem();
-					}
-				//}
+				if(CheckSpot(heldObj, t_obj)) {
+					heldObj.transform.parent = t_obj.transform;
+					heldObj.transform.localPosition = heldObj.transform.position - heldObj.transform.FindChild("TopLeft").position;
+					PlaceItem(heldObj, t_obj);
+					heldObj = null;
+					holding = false;
+				}
 			}
 		} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit2, 20.0f, beltMask)) {
 			GameObject t_obj = hit2.collider.gameObject;
@@ -127,6 +144,49 @@ public class GrabItem : MonoBehaviour {
 		RaycastHit hit;
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, posMask)) {
 			grabber.transform.position = hit.point;
+		}
+	}
+
+	void ClearSpot() {
+		foreach (GameObject outline in outlined) {
+			outline.renderer.material.color = Color.white;
+		}
+		outlined.Clear ();
+	}
+
+	void DrawSpot(GameObject obj, GameObject nodeObj, Color color) {
+
+		Item item = obj.GetComponent<Item>();
+		Node node = nodeObj.GetComponent<Node>();
+		
+		int x = node.xPos, y = node.yPos; //could be issue
+		
+		int width = obj.GetComponent<Item>().width;
+		int height = obj.GetComponent<Item>().height;
+		
+		
+		for(int i = 0; i < width; i++) {
+			for(int j = 0; j < height; j++) {
+				if(item.filled[i,j]) {
+					if(x > -1 && x < itemGrid.columns) {
+						if(y > -1 && y < itemGrid.rows) {
+							for(int k = 0; k < transform.childCount; k++) {
+								if(itemGrid.nodes[x,y].transform.GetChild(k).tag == "Node") {
+									itemGrid.nodes[x,y].transform.GetChild(k).renderer.material.color = color;
+									outlined.Add(itemGrid.nodes[x,y].transform.GetChild(k).gameObject);
+								}
+							}
+						}
+					}
+				}
+				x += item.dirY.x;
+				y += item.dirY.y;
+			}
+			x -= item.dirY.x * height;
+			y -= item.dirY.y * height;
+			
+			x += item.dirX.x;
+			y += item.dirX.y;
 		}
 	}
 

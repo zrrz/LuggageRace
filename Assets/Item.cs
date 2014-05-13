@@ -12,10 +12,11 @@ public class Item : MonoBehaviour {
 
 	public int width, height;
 
-	int rotTableIterX = 0;
-	int rotTableIterY = 3;
+	protected int rotTableIterX = 0;
+	protected int rotTableIterY = 1;
 
-	static Dir[] rotationTable = {new Dir(1, 0), new Dir(0, 1), new Dir(-1, 0), new Dir(0, -1)}; //Will it only "new" once?
+	//static Dir[] rotationTable = {new Dir(1, 0), new Dir(0, 1), new Dir(-1, 0), new Dir(0, -1)}; //Will it only "new" once?
+	static protected Dir[] rotationTable = {new Dir(1, 0), new Dir(0, -1), new Dir(-1, 0), new Dir(0, 1)};
 
 	public Dir dirX;
 	public Dir dirY;
@@ -33,14 +34,15 @@ public class Item : MonoBehaviour {
 		dirY = rotationTable[rotTableIterY];
 	}
 
-	void Update () {
-	
-	}
-
 	public void Rotate() {
-		dirX = rotationTable[SafeAdd(rotTableIterX)];
-		dirY = rotationTable[SafeAdd(rotTableIterY)];
-		transform.Rotate(Vector3.forward * 90.0f);
+		rotTableIterX = SafeAdd (rotTableIterX);
+		rotTableIterY =	SafeAdd(rotTableIterY);
+
+		dirX = rotationTable[rotTableIterX];
+		dirY = rotationTable[rotTableIterY];
+
+		//transform.Rotate(Vector3.forward * 90.0f);
+		transform.RotateAround (transform.parent.position, Vector3.forward, -90.0f);
 	}
 
 	int SafeAdd(int iter) {
