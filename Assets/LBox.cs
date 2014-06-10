@@ -17,8 +17,8 @@ public class LBox : Item {
 				filled[i,j] = true;
 			}
 		}
-		filled [1, 1] = false;
-		filled [2, 1] = false;
+		filled [0, 0] = false;
+		//filled [2, 1] = false;
 		
 		dirX = rotationTable[rotTableIterX];
 		dirY = rotationTable[rotTableIterY];

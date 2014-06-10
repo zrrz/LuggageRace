@@ -10,6 +10,7 @@ public class GrabItem : MonoBehaviour {
 	public LayerMask nodeMask;
 	public LayerMask beltMask;
 	public LayerMask itemMask;
+	public LayerMask bagMask;
 
 	public bool holding = false;
 	public bool floating = false;
@@ -52,6 +53,9 @@ public class GrabItem : MonoBehaviour {
 				if (Input.GetButtonDown ("Fire1")) {
 					PickUpItem();
 				}
+				if (Input.GetButtonDown("Fire2")) {
+					ToggleBag();
+				}
 			}
 		}
 	}
@@ -91,6 +95,8 @@ public class GrabItem : MonoBehaviour {
 					PlaceItem(heldObj, t_obj);
 					heldObj.transform.parent = t_obj.transform;
 					heldObj.transform.localPosition = heldObj.transform.position - heldObj.transform.FindChild("TopLeft").position + Vector3.back;
+					//if(heldObj.tag == "Bag")
+						//heldObj.transform.localPosition += Vector3.back * 2.0f;
 					heldObj = null;
 					holding = false;
 				}
@@ -118,11 +124,21 @@ public class GrabItem : MonoBehaviour {
 		floating = true;
 	}
 
+	void ToggleBag() {
+		RaycastHit hit;
+		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, itemMask)) {
+			GameObject t_obj = hit.collider.gameObject;
+			if(t_obj.tag == "Bag") {
+				t_obj.GetComponent<Bag>().ToggleBag();
+			}
+		}
+	}
+
 	void PickUpItem() {
 		RaycastHit hit;
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, itemMask)) {
 			GameObject t_obj = hit.collider.gameObject;
-			if(t_obj.tag == "Item") {
+			if(t_obj.tag == "Item" || t_obj.tag == "Bag") {
 				RemoveItem(t_obj, t_obj.transform.parent.gameObject);
 
 				t_obj.transform.parent = grabber;
@@ -233,6 +249,13 @@ public class GrabItem : MonoBehaviour {
 	void PlaceItem(GameObject obj, GameObject nodeObj) {
 		Node t_node = nodeObj.GetComponent<Node>();
 		if(t_node) {
+
+			if(obj.tag == "Bag") {
+				Bag bag = obj.GetComponent<Bag>();
+				bag.topLeftX = t_node.xPos;
+				bag.topLeftY = t_node.yPos;
+			}
+
 			Item item = obj.GetComponent<Item>();
 
 			int x = t_node.xPos, y = t_node.yPos;

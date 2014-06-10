@@ -68,7 +68,7 @@ public class ConveyerBelt : MonoBehaviour {
 
 		t_item.transform.parent = nodes[index].transform;
 
-		t_item.transform.localPosition = new Vector3((t_item.width - 1)/2.0f, 1 - 1.0f/t_item.height, 0.0f);
+		t_item.transform.localPosition = new Vector3((t_item.width - 1)/2.0f, 1 - 1.0f/t_item.height, -0.5f);
 
 		for (int i = 0; i < t_item.width; i++) {
 			nodes[i + index].obj = t_item.gameObject;
