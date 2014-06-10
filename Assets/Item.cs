@@ -14,8 +14,7 @@ public class Item : MonoBehaviour {
 
 	protected int rotTableIterX = 0;
 	protected int rotTableIterY = 1;
-
-	//static Dir[] rotationTable = {new Dir(1, 0), new Dir(0, 1), new Dir(-1, 0), new Dir(0, -1)}; //Will it only "new" once?
+	
 	static protected Dir[] rotationTable = {new Dir(1, 0), new Dir(0, -1), new Dir(-1, 0), new Dir(0, 1)};
 
 	public Dir dirX;
@@ -41,10 +40,15 @@ public class Item : MonoBehaviour {
 		dirX = rotationTable[rotTableIterX];
 		dirY = rotationTable[rotTableIterY];
 
-		dirX = rotationTable[SafeAdd(rotTableIterX)];
-
 		//transform.Rotate(Vector3.forward * 90.0f);
 		transform.RotateAround (transform.parent.position, Vector3.forward, -90.0f);
+	}
+
+	public void ResetRotation() {
+		dirX = rotationTable[0];
+		dirY = rotationTable[1];
+
+		transform.eulerAngles = Vector3.zero;
 	}
 
 	int SafeAdd(int iter) {

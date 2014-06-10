@@ -23,7 +23,6 @@ public class ConveyerBelt : MonoBehaviour {
 
 	void Start() {
 		beltStart = transform.position.x - transform.FindChild("Belt").localScale.x / 2.0f;
-		//nodeSize = transform.FindChild ("Belt").localScale.x / beltLength;
 		nodeSize = nodePrefab.transform.localScale.x;
 
 		nodes = new List<BeltNode> ();
@@ -69,16 +68,7 @@ public class ConveyerBelt : MonoBehaviour {
 
 		t_item.transform.parent = nodes[index].transform;
 
-		//float buffer = nodeSize - nodePrefab.transform.localScale.x;
-
 		t_item.transform.localPosition = new Vector3((t_item.width - 1)/2.0f, 1 - 1.0f/t_item.height, 0.0f);
-		//Vector3 pos = new Vector3 (0f, (1 - 1.0f/t_item.height), -0.5f); 
-		//if(t_item.width % 2 == 0) //even
-		//	pos.x += (nodes[index].transform.position.x + nodes[(index + 1) % numNodes].transform.position.x)/2.0f;
-		//else
-		//	pos.x = nodes[(index + 1) % numNodes].transform.position.x;
-			
-		//t_item.transform.localPosition = pos;
 
 		for (int i = 0; i < t_item.width; i++) {
 			nodes[i + index].obj = t_item.gameObject;
