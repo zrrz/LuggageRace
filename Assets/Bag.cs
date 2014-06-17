@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Bag : Item {
 
@@ -18,7 +19,17 @@ public class Bag : Item {
 
 	bool open = false;
 
+	public List<GameObject> objsInside;
+
+	public GameObject nodePrefab;
+
+	public GameObject[,] nodes;
+
 	void Start () {
+		nodes = new GameObject[width, height];
+
+		objsInside = new List<GameObject> ();
+
 		inside = transform.FindChild ("Inside").gameObject;
 		cover = transform.FindChild ("Cover").gameObject;
 
@@ -42,6 +53,10 @@ public class Bag : Item {
 		if(!open) {
 			open = true;
 
+			foreach(GameObject obj in objsInside) {
+				obj.renderer.enabled = true;
+			}
+
 			inside.SetActive (true);
 			cover.SetActive (false);
 			grayscalePlane.SetActive (true);
@@ -64,6 +79,10 @@ public class Bag : Item {
 			}
 		} else {
 			open = false;
+
+			foreach(GameObject obj in objsInside) {
+				obj.renderer.enabled = false;
+			}
 
 			inside.SetActive (false);
 			cover.SetActive (true);

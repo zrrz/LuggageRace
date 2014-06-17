@@ -21,7 +21,11 @@ public class ConveyerBelt : MonoBehaviour {
 
 	int nodeIndex = 0;
 
+	ItemGrid itemGrid;
+
 	void Start() {
+		itemGrid = ObjectManager.instance.itemGrid;
+
 		beltStart = transform.position.x - transform.FindChild("Belt").localScale.x / 2.0f;
 		nodeSize = nodePrefab.transform.localScale.x;
 
@@ -66,9 +70,13 @@ public class ConveyerBelt : MonoBehaviour {
 			return;
 		}
 
+		t_item.transform.localScale = new Vector3 (itemGrid.nodeWidth, itemGrid.nodeHeight, 1.0f);
+
 		t_item.transform.parent = nodes[index].transform;
 
 		t_item.transform.localPosition = new Vector3((t_item.width - 1)/2.0f, 1 - 1.0f/t_item.height, -0.5f);
+
+		//t_item.transform.FindChild ("TopLeft").localPosition = new Vector3 (-t_item.width / 4.0f, t_item.height / 4.0f, 0.0f);
 
 		for (int i = 0; i < t_item.width; i++) {
 			nodes[i + index].obj = t_item.gameObject;
