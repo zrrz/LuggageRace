@@ -9,9 +9,9 @@ public class Bag : Item {
 	[System.NonSerialized]
 	public int topLeftY;
 
-	public ItemGrid itemGrid;
+	ItemGrid itemGrid;
 
-	public GameObject grayScalePlane;
+	GameObject grayscalePlane;
 
 	GameObject inside;
 	GameObject cover;
@@ -24,10 +24,9 @@ public class Bag : Item {
 
 		inside.SetActive (false);
 
-		itemGrid = GameObject.Find ("ItemGrid").GetComponent<ItemGrid>();
-		grayScalePlane = GameObject.Find ("GrayScalePlane");
+		itemGrid = ObjectManager.instance.itemGrid;
+		grayscalePlane = ObjectManager.instance.grayscalePlane;
 
-//		grayScalePlane.SetActive (false);
 
 		filled = new bool[width, height];
 		for(int i = 0; i < width; i++) {
@@ -45,7 +44,7 @@ public class Bag : Item {
 
 			inside.SetActive (true);
 			cover.SetActive (false);
-			grayScalePlane.SetActive (true);
+			grayscalePlane.SetActive (true);
 
 			transform.localPosition += Vector3.back * 2.0f;
 
@@ -68,7 +67,7 @@ public class Bag : Item {
 
 			inside.SetActive (false);
 			cover.SetActive (true);
-			grayScalePlane.SetActive (false);
+			grayscalePlane.SetActive (false);
 			
 			transform.localPosition -= Vector3.back * 2.0f;
 			

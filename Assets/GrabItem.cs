@@ -15,8 +15,8 @@ public class GrabItem : MonoBehaviour {
 	public bool holding = false;
 	public bool floating = false;
 
-	public ConveyerBelt conveyerBelt;
-	public ItemGrid itemGrid;
+	ConveyerBelt conveyerBelt;
+	ItemGrid itemGrid;
 
 	GameObject heldObj;
 
@@ -24,9 +24,10 @@ public class GrabItem : MonoBehaviour {
 
 	void Start () {
 		outlined = new List<GameObject> ();
-		conveyerBelt = GameObject.Find ("Conveyer Belt").GetComponent<ConveyerBelt>();
+		conveyerBelt = ObjectManager.instance.conveyerBelt;
+		itemGrid = ObjectManager.instance.itemGrid;
+
 		grabber = transform.FindChild ("Grabber");
-		itemGrid = GameObject.Find("ItemGrid").GetComponent<ItemGrid>();
 	}
 
 	void Update () {
