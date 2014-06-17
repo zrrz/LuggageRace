@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class ConveyerBelt : MonoBehaviour {
 
+	[System.NonSerialized]
 	public List<BeltNode> nodes;
 
 	public float speed = 1.0f;

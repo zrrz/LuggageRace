@@ -14,7 +14,9 @@ public class BeltNode : MonoBehaviour {
 	}
 
 	void Update () {
-		if(on)
-			transform.localPosition += Vector3.right * speed * Time.deltaTime;
+		if(on) {
+			if(ObjectManager.instance.gameManager.gameRunning)
+				transform.localPosition += Vector3.right * speed * Time.deltaTime;
+		}
 	}
 }
