@@ -71,7 +71,7 @@ public class ConveyerBelt : MonoBehaviour {
 			return;
 		}
 
-		t_item.transform.localScale = new Vector3 (itemGrid.nodeWidth, itemGrid.nodeHeight, 1.0f);
+		//t_item.transform.localScale = new Vector3 (itemGrid.nodeWidth * t_item.width, itemGrid.nodeHeight * t_item.height, 1.0f);
 
 		t_item.transform.parent = nodes[index].transform;
 

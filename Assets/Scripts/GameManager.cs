@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour {
 	public GUISkin guiSkin;
 
 	void Start () {
+		Screen.SetResolution(450, 800, false);
 		GameObject.DontDestroyOnLoad (gameObject);
 		if(s_instance == null)
 			s_instance = this;
@@ -45,6 +46,7 @@ public class GameManager : MonoBehaviour {
 
 	void OnLevelWasLoaded(int level) {
 		if(level == 0) {
+			gameRunning = false;
 			StartCoroutine ("FadeInGrid");
 		}
 	}
@@ -61,7 +63,6 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator FadeInGrid() {
 		yield return new WaitForSeconds (gridFadeInTime);
-		ObjectManager t = ObjectManager.instance;
 		Color t_color = ObjectManager.instance.grid.renderer.material.color;
 		while(t_color.a < 1.0f) {
 			t_color.a += 0.01f;

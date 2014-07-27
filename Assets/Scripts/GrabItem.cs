@@ -22,7 +22,13 @@ public class GrabItem : MonoBehaviour {
 
 	List<GameObject> outlined;
 
+	public static GrabItem s_instace;
+
+	[System.NonSerialized]
+	public Vector3 mousePos;
+
 	void Start () {
+		s_instace = this;
 		outlined = new List<GameObject> ();
 		conveyerBelt = ObjectManager.instance.conveyerBelt;
 		itemGrid = ObjectManager.instance.itemGrid;
@@ -79,9 +85,9 @@ public class GrabItem : MonoBehaviour {
 			GameObject t_obj = hit.collider.gameObject;
 			if(t_obj.tag == "Node") {
 				if(CheckSpot(heldObj, t_obj)) {
-					DrawSpot(heldObj, t_obj, Color.blue);
+					DrawSpot(heldObj, t_obj, new Color(0f, 0f, 1f, 0.5f));
 				} else {
-					DrawSpot(heldObj, t_obj, Color.red);
+					DrawSpot(heldObj, t_obj, new Color(1f, 0f, 0f, 0.5f));
 				}
 			}
 		}
@@ -96,10 +102,9 @@ public class GrabItem : MonoBehaviour {
 					PlaceItem(heldObj, t_obj);
 					heldObj.transform.parent = t_obj.transform;
 					heldObj.transform.localPosition = heldObj.transform.position - heldObj.transform.FindChild("TopLeft").position + Vector3.back;
-					//if(heldObj.tag == "Bag")
-						//heldObj.transform.localPosition += Vector3.back * 2.0f;
 					heldObj = null;
 					holding = false;
+					ClearSpot();
 				}
 			}
 		} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, beltMask)) {
@@ -156,12 +161,13 @@ public class GrabItem : MonoBehaviour {
 		RaycastHit hit;
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, posMask)) {
 			grabber.transform.position = hit.point;
+			mousePos = hit.point;
 		}
 	}
 
 	void ClearSpot() {
 		foreach (GameObject outline in outlined) {
-			outline.renderer.material.color = Color.white;
+			outline.renderer.material.color = Color.clear;
 		}
 		outlined.Clear ();
 	}
@@ -171,7 +177,7 @@ public class GrabItem : MonoBehaviour {
 		Item item = obj.GetComponent<Item>();
 		Node node = nodeObj.GetComponent<Node>();
 		
-		int x = node.xPos, y = node.yPos; //could be issue
+		int x = node.xPos, y = node.yPos;
 		
 		int width = obj.GetComponent<Item>().width;
 		int height = obj.GetComponent<Item>().height;
@@ -328,4 +334,10 @@ public class GrabItem : MonoBehaviour {
 			}
 		}
 	}
+
+//	static public Vector3 MousePos {
+//		get {
+//			return GrabItem.s_instance.mousePos;
+//		}
+//	}
 }
