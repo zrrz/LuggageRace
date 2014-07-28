@@ -17,7 +17,8 @@ public class Bag : Item {
 	GameObject inside;
 	GameObject cover;
 
-	bool open = false;
+	[System.NonSerialized]
+	public bool open = false;
 
 	public List<GameObject> objsInside;
 
@@ -38,20 +39,19 @@ public class Bag : Item {
 		itemGrid = ObjectManager.instance.itemGrid;
 		grayscalePlane = ObjectManager.instance.grayscalePlane;
 
+		Init (); 
+	}
 
-		filled = new bool[width, height];
-		for(int i = 0; i < width; i++) {
-			for(int j = 0; j < height; j++) {
-				filled[i,j] = true;
-			}
-		}
-		dirX = rotationTable[rotTableIterX];
-		dirY = rotationTable[rotTableIterY];
+	public void Update() {
+		MoveEyes ();
 	}
 
 	public void ToggleBag() {
 		if(!open) {
 			open = true;
+
+			lEye.renderer.enabled = false;
+			rEye.renderer.enabled = false;
 
 			foreach(GameObject obj in objsInside) {
 				obj.renderer.enabled = true;
@@ -79,6 +79,9 @@ public class Bag : Item {
 			}
 		} else {
 			open = false;
+
+			lEye.renderer.enabled = true;
+			rEye.renderer.enabled = true;
 
 			foreach(GameObject obj in objsInside) {
 				obj.renderer.enabled = false;

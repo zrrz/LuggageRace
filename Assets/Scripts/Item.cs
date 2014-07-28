@@ -22,20 +22,24 @@ public class Item : MonoBehaviour {
 
 	const int ROT_TABLE_SIZE = 4;
 
-	GameObject lEye, rEye;
+	protected GameObject lEye, rEye;
 
 	Vector3 lEyeStartOffset, rEyeStartOffset;
 
-	 float eyeRange = 0.05f;
+	public float eyeRange = 0.05f;
 
 	void Start () {
+		Init ();
+	}
+
+	protected void Init() {
 		lEye = transform.FindChild("L_Eye").gameObject;
 		rEye = transform.FindChild("R_Eye").gameObject;
 		if(lEye)
 			lEyeStartOffset = lEye.transform.position - transform.position;
 		if(rEye)
 			rEyeStartOffset = rEye.transform.position - transform.position;
-
+		
 		filled = new bool[width, height];
 		for(int i = 0; i < width; i++) {
 			for(int j = 0; j < height; j++) {
@@ -65,6 +69,10 @@ public class Item : MonoBehaviour {
 	}
 
 	void Update() {
+		MoveEyes ();
+	}
+
+	protected void MoveEyes() {
 		if(lEye) {
 			Vector3 newPos = GrabItem.s_instace.mousePos - (transform.position + lEyeStartOffset);
 			lEye.transform.position = transform.position + lEyeStartOffset + (newPos.normalized * eyeRange);

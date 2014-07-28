@@ -22,5 +22,11 @@ public class LBox : Item {
 		
 		dirX = rotationTable[rotTableIterX];
 		dirY = rotationTable[rotTableIterY];
+
+		Init ();
+	}
+
+	void Update() {
+		MoveEyes ();
 	}
 }

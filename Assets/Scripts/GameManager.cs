@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour {
 		timer = 0.0f;
 	}
 
-	public GameManager instance {
+	public static GameManager instance {
 		get {
 			return s_instance;
 		}

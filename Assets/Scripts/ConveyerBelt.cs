@@ -22,10 +22,10 @@ public class ConveyerBelt : MonoBehaviour {
 
 	int nodeIndex = 0;
 
-	ItemGrid itemGrid;
+	//ItemGrid itemGrid;
 
 	void Start() {
-		itemGrid = ObjectManager.instance.itemGrid;
+	//	itemGrid = ObjectManager.instance.itemGrid;
 
 		beltStart = transform.position.x - transform.FindChild("Belt").localScale.x / 2.0f;
 		nodeSize = nodePrefab.transform.localScale.x;

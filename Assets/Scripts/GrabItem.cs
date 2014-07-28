@@ -27,6 +27,8 @@ public class GrabItem : MonoBehaviour {
 	[System.NonSerialized]
 	public Vector3 mousePos;
 
+	public bool bagOpen = false;
+
 	void Start () {
 		s_instace = this;
 		outlined = new List<GameObject> ();
@@ -39,29 +41,31 @@ public class GrabItem : MonoBehaviour {
 	void Update () {
 		UpdateGrabberPos ();
 
-		if(holding) {
-			ClearSpot();
-			DrawPlacementOutline();
+		if(GameManager.instance.gameRunning) {
+			if(holding) {
+				ClearSpot();
+				DrawPlacementOutline();
 
-			if(floating) {
-				if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
-					PickBackUpItem();
+				if(floating) {
+					if (Input.GetButtonDown ("Fire1")) { //Pick an item back up
+						PickBackUpItem();
+					}
+				} else {
+					if(Input.GetButtonUp("Fire1")) { //Drop an item into node
+						DropItem();
+					}
+					if (Input.GetButtonDown ("Fire2")) {
+						heldObj.GetComponent<Item>().Rotate();
+					}
 				}
 			} else {
-				if(Input.GetButtonUp("Fire1")) { //Drop an item into node
-					DropItem();
-				}
-				if (Input.GetButtonDown ("Fire2")) {
-					heldObj.GetComponent<Item>().Rotate();
-				}
-			}
-		} else {
-			if(!floating) {
-				if (Input.GetButtonDown ("Fire1")) {
-					PickUpItem();
-				}
-				if (Input.GetButtonDown("Fire2")) {
-					ToggleBag();
+				if(!floating) {
+					if (Input.GetButtonDown ("Fire1")) {
+						PickUpItem();
+					}
+					if (Input.GetButtonDown("Fire2")) {
+						ToggleBag();
+					}
 				}
 			}
 		}
@@ -135,7 +139,15 @@ public class GrabItem : MonoBehaviour {
 		if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, itemMask)) {
 			GameObject t_obj = hit.collider.gameObject;
 			if(t_obj.tag == "Bag") {
-				t_obj.GetComponent<Bag>().ToggleBag();
+				if(bagOpen) {
+					if(t_obj.GetComponent<Bag>().open) {
+						t_obj.GetComponent<Bag>().ToggleBag();
+						bagOpen = false;
+					}
+				} else {
+					t_obj.GetComponent<Bag>().ToggleBag();
+					bagOpen = true;
+				}
 			}
 		}
 	}
