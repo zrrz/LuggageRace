@@ -245,8 +245,8 @@ public class GrabItem : MonoBehaviour {
 			
 			int x = t_node.xPos, y = t_node.yPos;
 			
-			int width = obj.GetComponent<Item>().width;
-			int height = obj.GetComponent<Item>().height;
+			int width = item.width;
+			int height = item.height;
 			
 			
 			for(int i = 0; i < width; i++) {
@@ -256,7 +256,7 @@ public class GrabItem : MonoBehaviour {
 							return false;
 						if(y < 0 || y > itemGrid.rows - 1)
 							return false;
-						if(itemGrid.nodes[x,y].GetComponent<Node>().obj != null)
+						if(itemGrid.nodes[x,y].obj != null)
 							return false;
 					}
 					x += item.dirY.x;
@@ -297,14 +297,14 @@ public class GrabItem : MonoBehaviour {
 
 			int x = t_node.xPos, y = t_node.yPos;
 
-			int width = obj.GetComponent<Item>().width;
-			int height = obj.GetComponent<Item>().height;
+			int width = item.width;
+			int height = item.height;
 
 
 			for(int i = 0; i < width; i++) {
 				for(int j = 0; j < height; j++) {
 					if(item.filled[i,j]) {
-						itemGrid.nodes[x,y].GetComponent<Node>().obj = obj;
+						itemGrid.nodes[x,y].obj = obj;
 					}
 					x += item.dirY.x;
 					y += item.dirY.y;
@@ -335,14 +335,14 @@ public class GrabItem : MonoBehaviour {
 			
 			int x = t_node.xPos, y = t_node.yPos;
 			
-			int width = obj.GetComponent<Item>().width;
-			int height = obj.GetComponent<Item>().height;
+			int width = item.width;
+			int height = item.height;
 			
 			
 			for(int i = 0; i < width; i++) {
 				for(int j = 0; j < height; j++) {
 					if(item.filled[i,j]) {
-						itemGrid.nodes[x,y].GetComponent<Node>().obj = null;
+						itemGrid.nodes[x,y].obj = null;
 					}
 					x += item.dirY.x;
 					y += item.dirY.y;
