@@ -106,9 +106,19 @@ public class GrabItem : MonoBehaviour {
 					PlaceItem(heldObj, t_obj);
 					heldObj.transform.parent = t_obj.transform;
 					heldObj.transform.localPosition = heldObj.transform.position - heldObj.transform.FindChild("TopLeft").position + Vector3.back;
-					heldObj = null;
+
 					holding = false;
 					ClearSpot();
+
+					List<SpriteRenderer> renderers = new List<SpriteRenderer> (heldObj.GetComponentsInChildren<SpriteRenderer>());
+					if(heldObj.GetComponent<SpriteRenderer>() != null)
+						renderers.Add(heldObj.GetComponent<SpriteRenderer>());
+					
+					foreach(SpriteRenderer rend in renderers) {
+						rend.sortingOrder--;
+					}
+
+					heldObj = null;
 				}
 			}
 		} else if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 20.0f, beltMask)) {
@@ -165,6 +175,14 @@ public class GrabItem : MonoBehaviour {
 				t_obj.transform.localPosition = pos;
 				holding = true;
 				heldObj = t_obj;
+
+				List<SpriteRenderer> renderers = new List<SpriteRenderer> (heldObj.GetComponentsInChildren<SpriteRenderer>());
+				if(heldObj.GetComponent<SpriteRenderer>() != null)
+					renderers.Add(heldObj.GetComponent<SpriteRenderer>());
+
+				foreach(SpriteRenderer rend in renderers) {
+					rend.sortingOrder++;
+				}
 			}
 		}
 	}
@@ -346,10 +364,4 @@ public class GrabItem : MonoBehaviour {
 			}
 		}
 	}
-
-//	static public Vector3 MousePos {
-//		get {
-//			return GrabItem.s_instance.mousePos;
-//		}
-//	}
 }
