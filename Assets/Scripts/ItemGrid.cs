@@ -64,27 +64,35 @@ public class ItemGrid : MonoBehaviour {
 	}
 
 	void Update() {
-		List<GameObject> objsChecked = new List<GameObject> ();
-		for(int y = 1; y < rows; y++) {
-			for (int x = 0; x < columns; x++) {
-				if(nodes[x,y].obj != null) {
-					if(objsChecked.Contains(nodes[x,y].obj) == false) {
-						Item t_obj = nodes[x,y].obj.GetComponent<Item>();
-						//if(y - t_obj.height > -1) {
-							objsChecked.Add(t_obj.gameObject);
-							//x -= t_obj.width - 1;
+		if(GameManager.instance.gameRunning) {
+			if(GameManager.instance.gravity) {
+				List<GameObject> objsChecked = new List<GameObject> ();
 
-							bool fall = true;
-							for(int i = 0; i < t_obj.width; i++) {
-								if(nodes[x + i, y - 1].obj != null)
-									fall = false;
+				for(int y = 1; y < rows; y++) {
+					for (int x = 0; x < columns; x++) {
+						if(nodes[x,y].obj != null) {
+							if(objsChecked.Contains(nodes[x,y].obj) == false) {
+								Item t_obj = nodes[x,y].obj.GetComponent<Item>();
+								objsChecked.Add(t_obj.gameObject);
+
+								bool fall = true;
+								for(int i = 0; i < t_obj.width; i++) {
+									int yMod = 0;
+									if(!t_obj.filled[i, t_obj.height - 1]) {
+										for(int j = 0; j < t_obj.height; j++) {
+											yMod++;
+										}
+									}
+									if(nodes[x + i, y + yMod - 1].obj != null)
+										fall = false;
+								}
+								if(fall) {
+									print ("removing: " + x + " " + y + " placing: " + x + " " + (y - 1));
+									RemoveItem(nodes[x,y + (t_obj.height - 1)]);
+									PlaceItem(nodes[x, y + (t_obj.height - 1) - 1], t_obj.gameObject);
+								}
 							}
-							if(fall) {
-								print ("removing: " + x + " " + y + " placing: " + x + " " + (y - 1));
-								RemoveItem(nodes[x,y]);
-								PlaceItem(nodes[x, y - 1], t_obj.gameObject);
-							}
-						//}
+						}
 					}
 				}
 			}

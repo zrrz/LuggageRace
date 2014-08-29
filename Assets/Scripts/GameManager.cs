@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour {
 
 	public GUISkin guiSkin;
 
+	public bool gravity = true;
+
 	void Start () {
 		Screen.SetResolution(450, 800, false);
 		GameObject.DontDestroyOnLoad (gameObject);
